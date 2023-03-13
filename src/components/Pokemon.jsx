@@ -38,9 +38,15 @@ class Pokemon extends React.Component {
     await Promise.all(_.map(fourRandomPokemonMoves, async randomPokemonMove => {
       const move = (await axios.get(`${POKEAPI_MOVE_URL}/${randomPokemonMove.move.name}/`)).data;
       pokemonMoves.push({
-        names: move.names,
-        power: move.power,
-        type: move.type.name
+        names: move.names
+      });
+    }));
+
+    const pokemonTypes = [];
+    await Promise.all(_.map(pokemon.types, async randomPokemonType => {
+      const type = (await axios.get(randomPokemonType.type.url)).data;
+      pokemonTypes.push({
+        names: type.names
       });
     }));
     
@@ -48,10 +54,9 @@ class Pokemon extends React.Component {
       isLoading: false,
       pokemonName: pokemon.name,
       pokemonSpriteUrl: pokemon.sprites.front_default,
-      pokemonTypes: pokemon.types.map(type => type.type.name),
+      pokemonTypes: pokemonTypes,
       pokemonMoves: pokemonMoves,
     });
-    console.log(this.pokemonTypes);
   }
 
   async componentDidMount() {
@@ -106,7 +111,7 @@ class Pokemon extends React.Component {
                                     <h2>Tipo</h2>
                                     {this.state.pokemonTypes.map((type, index) => {
                                         return(
-                                            <div key={index}>{type}</div>
+                                            <div key={index}>{type.names[5].name}</div>
                                         );
                                     })}
                                 </div>
